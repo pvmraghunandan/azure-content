@@ -89,8 +89,6 @@ We'll be using an existing [example](service-fabric-reliable-services-communicat
         Add a `TransportSettings` section in the settings.xml file.
 
         ```xml
-        <!--Section name should always end with "TransportSettings".-->
-        <!--Here we are using a prefix "HelloWorldStateful".-->
         <Section Name="HelloWorldStatefulTransportSettings">
             <Parameter Name="MaxMessageSize" Value="10000000" />
             <Parameter Name="SecurityCredentialsType" Value="X509" />
@@ -112,12 +110,12 @@ We'll be using an existing [example](service-fabric-reliable-services-communicat
             {
                 new ServiceReplicaListener(
                     (context) => new FabricTransportServiceRemotingListener(
-                        context,this,FabricTransportListenerSettings.LoadFrom("HelloWorldStateful")))
+                        context,this,FabricTransportListenerSettings.LoadFrom("HelloWorldStatefulTransportSettings")))
             };
         }
         ```
 
-         If you add a `TransportSettings` section in the settings.xml file without any prefix, `FabricTransportListenerSettings` will load all the settings from this section by default.
+         If you add a `TransportSettings` section in the settings.xml file, `FabricTransportListenerSettings` will load all the settings from this section by default.
 
          ```xml
          <!--"TransportSettings" section without any prefix.-->
@@ -168,12 +166,12 @@ We'll be using an existing [example](service-fabric-reliable-services-communicat
 
     ```
 
-    If the client code is running as part of a service, you can load `FabricTransportSettings` from the settings.xml file. Create a TransportSettings section that is similar to the service code, as shown earlier. Make the following changes to the client code:
+    If the client code is running as part of a service, you can load `FabricTransportSettings` from the settings.xml file. Create a TransportSettings section that is similar to the service code, as shown earlier. Make the following changes to the client code where TransportSettingsSectionName specifies the name of TransportSettings section in settings.xml:
 
     ```csharp
 
     ServiceProxyFactory serviceProxyFactory = new ServiceProxyFactory(
-        (c) => new FabricTransportServiceRemotingClientFactory(FabricTransportSettings.LoadFrom("TransportSettingsPrefix")));
+        (c) => new FabricTransportServiceRemotingClientFactory(FabricTransportSettings.LoadFrom("TransportSettingsSectionName")));
 
     IHelloWorldStateful client = serviceProxyFactory.CreateServiceProxy<IHelloWorldStateful>(
         new Uri("fabric:/MyApplication/MyHelloWorldService"));
